@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<applicationtype xmlns="http://www.activecomponents.org/jadex-application"
+                 xmlns:env="http://www.activecomponents.org/jadex-envspace"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.activecomponents.org/jadex-application
+                 http://www.activecomponents.org/jadex-application-${jadex_build_version}.xsd
+                 http://www.activecomponents.org/jadex-envspace
+                 http://www.activecomponents.org/jadex-envspace-${jadex_build_version}.xsd"
+                 name="bdiAgriculture" package="au.rdellios.bdiagriculture">
+    <imports>
+        <import>jadex.bridge.IComponentIdentifier</import>
+        <import>jadex.extension.envsupport.environment.*</import>
+        <import>jadex.extension.envsupport.environment.space2d.*</import>
+        <import>jadex.extension.envsupport.environment.RoundBasedExecutor</import>
+        <import>jadex.extension.envsupport.math.*</import>
+        <import>jadex.bridge.service.clock.IClockService</import>
+        <import>jadex.extension.envsupport.dataview.*</import>
+        <import>jadex.extension.envsupport.observer.perspective.*</import>
+    </imports>
+
+    <!-- Space types of this application. Spaces are shared by agents of the same application. -->
+    <extensiontypes>
+        <!-- Declaration of a grid environment as space type. -->
+        <env:envspacetype name="gc2dspace" width="10" height="10" class="Grid2D">
+
+            <!-- The objecttypes of this environment. -->
+            <env:objecttypes>
+                <env:objecttype name="weed">
+                    <env:property name="age">
+                        new Integer((int)((Math.random()*25)))
+                    </env:property>
+                </env:objecttype>
+
+
+                <env:objecttype name="scout">
+                    <env:property name="position" event="true"/>
+                </env:objecttype>
+            </env:objecttypes>
+
+            <!-- Processes run on their own in the environment. -->
+            <env:processtypes>
+                <env:processtype name="create" class="DefaultObjectCreationProcess">
+                    <env:property name="tickrate">5</env:property>
+                    <env:property name="type">"weed"</env:property>
+                    <env:property name="properties" dynamic="true">
+                        jadex.commons.SUtil.createHashMap(
+                        new String[]{Space2D.PROPERTY_POSITION},
+                        new Object[]{((Space2D)$space).getRandomPosition(Vector2Int.ZERO)})
+                    </env:property>
+                </env:processtype>
+            </env:processtypes>
+
+            <!-- Data views for defining cut outs of the world objects. -->
+            <!-- Allowing you to filter out objects -->
+            <env:dataviews>
+                <env:dataview name="view_all" class="GeneralDataView2D"/>
+            </env:dataviews>
+
+            <env:avatarmappings>
+                <env:avatarmapping componenttype="Scout" objecttype="scout"/>
+            </env:avatarmappings>
+
+            <env:actiontypes>
+            </env:actiontypes>
+
+            <env:perspectives>
+                <env:perspective name="abstract" class="Perspective2D" objectplacement="center">
+                    <env:drawable objecttype="weed" width="0.7" height="0.7">
+                        <env:triangle layer="0" color="green"/>
+                    </env:drawable>
+                    <env:drawable objecttype="scout" width="1" height="1">
+                        <env:rectangle layer="0" color="yellow"/>
+                    </env:drawable>
+                    <env:prelayers>
+                        <env:gridlayer width="1.0" height="1.0" color="black"/>
+                    </env:prelayers>
+                </env:perspective>
+            </env:perspectives>
+
+            <!-- A space executor defines the space execution policy (e.g. roundbased vs. continuous). -->
+            <env:spaceexecutor class="RoundBasedExecutor">
+                <env:property name="space">$space</env:property>
+                <env:property name="execution_monitoring">false</env:property>
+            </env:spaceexecutor>
+        </env:envspacetype>
+    </extensiontypes>
+
+    <componenttypes>
+        <componenttype name="Scout" filename="au.rdellios.bdiagriculture.ScoutAgent.class"/>
+    </componenttypes>
+
+    <configurations>
+        <configuration name="default">
+            <extensions>
+                <env:envspace name="mygc2dspace" type="gc2dspace">
+                    <env:objects>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(0, 0)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(0, 2)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(0, 4)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(0, 6)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(0, 8)</env:property>
+                        </env:object>
+                        <!--                        <env:object type="weed">-->
+                        <!--                            <env:property name="position">new Vector2Double(3, 0)</env:property>-->
+                        <!--                        </env:object>-->
+                        <!--                        <env:object type="weed">-->
+                        <!--                            <env:property name="position">new Vector2Double(3, 2)</env:property>-->
+                        <!--                        </env:object>-->
+                        <!--                        <env:object type="weed">-->
+                        <!--                            <env:property name="position">new Vector2Double(3, 4)</env:property>-->
+                        <!--                        </env:object>-->
+                        <!--                        <env:object type="weed">-->
+                        <!--                            <env:property name="position">new Vector2Double(3, 6)</env:property>-->
+                        <!--                        </env:object>-->
+                        <!--                        <env:object type="weed">-->
+                        <!--                            <env:property name="position">new Vector2Double(3, 8)</env:property>-->
+                        <!--                        </env:object>-->
+                        <!--                        <env:object type="weed">-->
+                        <!--                            <env:property name="position">new Vector2Double(6, 0)</env:property>-->
+                        <!--                        </env:object>-->
+                        <!--                        <env:object type="weed">-->
+                        <!--                            <env:property name="position">new Vector2Double(6, 2)</env:property>-->
+                        <!--                        </env:object>-->
+                        <!--                        <env:object type="weed">-->
+                        <!--                            <env:property name="position">new Vector2Double(6, 4)</env:property>-->
+                        <!--                        </env:object>-->
+                        <!--                        <env:object type="weed">-->
+                        <!--                            <env:property name="position">new Vector2Double(6, 6)</env:property>-->
+                        <!--                        </env:object>-->
+                        <!--                        <env:object type="weed">-->
+                        <!--                            <env:property name="position">new Vector2Double(6, 8)</env:property>-->
+                        <!--                        </env:object>-->
+                        <!--                        <env:object type="weed">-->
+                        <!--                            <env:property name="position">new Vector2Double(9, 0)</env:property>-->
+                        <!--                        </env:object>-->
+                        <!--                        <env:object type="weed">-->
+                        <!--                            <env:property name="position">new Vector2Double(9, 2)</env:property>-->
+                        <!--                        </env:object>-->
+                        <!--                        <env:object type="weed">-->
+                        <!--                            <env:property name="position">new Vector2Double(9, 4)</env:property>-->
+                        <!--                        </env:object>-->
+                        <!--                        <env:object type="weed">-->
+                        <!--                            <env:property name="position">new Vector2Double(9, 6)</env:property>-->
+                        <!--                        </env:object>-->
+                        <!--                        <env:object type="weed">-->
+                        <!--                            <env:property name="position">new Vector2Double(9, 8)</env:property>-->
+                        <!--                        </env:object>-->
+
+
+                    </env:objects>
+
+                    <env:processes>
+                        <!--                        <env:process type="create">-->
+                        <!--                            <env:property name="tickrate">15</env:property>-->
+                        <!--                        </env:process>-->
+                    </env:processes>
+                    <env:observers>
+                        <env:observer name="world" dataview="view_all" perspective="abstract"/>
+                    </env:observers>
+                </env:envspace>
+            </extensions>
+            <components>
+                <component type="Scout" number="1"/>
+            </components>
+        </configuration>
+    </configurations>
+</applicationtype>
