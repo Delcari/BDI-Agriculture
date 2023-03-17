@@ -19,22 +19,33 @@ public class MovePlan {
 
     @PlanBody
     public void body(ISpaceObject targetObj) {
-
         System.out.println("Starting MovePlan...");
         IVector2 targetPos = (IVector2) targetObj.getProperty(Space2D.PROPERTY_POSITION);
         Object oid = scoutAgent.env.getAvatar(scoutAgent.getAgent().getDescription()).getId();
-
         // Continue moving until the Scout is at the targetPosition
-        while (((IVector2) scoutAgent.getPosition() != targetPos)) {
+        while (scoutAgent.getPosition() != targetPos) {
+            scoutAgent.getAgent().waitForDelay(250).get();
             //Which direction is closer? Left/Right/Up/Down
-            IVector1 movement = scoutAgent.env.getShortestDirection(scoutAgent.getPosition().getX(), targetPos.getX(), true);
-            if (movement.getAsInteger() != 0) {
+            int movement = (scoutAgent.env.getShortestDirection(scoutAgent.getPosition().getX(), targetPos.getX(), true)).getAsInteger();
+            //Move in specified direction
+            if (movement != 0) {
+                if ((movement < 0)) {
+                    //Rotate Scout to face left
+                    scoutAgent.myself.setProperty("direction", "left");
+                } else {
+                    scoutAgent.myself.setProperty("direction", "right");
+                }
                 //Move towards target
-                scoutAgent.env.setPosition(oid, new Vector2Int(scoutAgent.getPosition().getX().getAsInteger() + movement.getAsInteger(), scoutAgent.getPosition().getYAsInteger()));
+                scoutAgent.env.setPosition(oid, new Vector2Int(scoutAgent.getPosition().getX().getAsInteger() + movement, scoutAgent.getPosition().getYAsInteger()));
             } else {
-                movement = scoutAgent.env.getShortestDirection(scoutAgent.getPosition().getY(), targetPos.getY(), false);
-                if (movement.getAsInteger() != 0) {
-                    scoutAgent.env.setPosition(oid, new Vector2Int(scoutAgent.getPosition().getX().getAsInteger(), scoutAgent.getPosition().getYAsInteger() + movement.getAsInteger()));
+                movement = (scoutAgent.env.getShortestDirection(scoutAgent.getPosition().getY(), targetPos.getY(), false)).getAsInteger();
+                if (movement != 0) {
+                    if ((movement < 0)) {
+                        scoutAgent.myself.setProperty("direction", "up");
+                    } else {
+                        scoutAgent.myself.setProperty("direction", "down");
+                    }
+                    scoutAgent.env.setPosition(oid, new Vector2Int(scoutAgent.getPosition().getX().getAsInteger(), scoutAgent.getPosition().getYAsInteger() + movement));
                 }
             }
         }
