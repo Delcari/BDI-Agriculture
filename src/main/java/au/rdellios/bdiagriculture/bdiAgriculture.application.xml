@@ -34,6 +34,22 @@
 
                 <env:objecttype name="scout">
                     <env:property name="position" event="true"/>
+                    <env:property name="rotation" dynamic="true">
+                        <!-- Rotate the scout to face the direction it is moving -->
+                        $object.direction == null <!--right--> || $object.direction.equals("right") ? null :
+                        $object.direction.equals("left") ? new Vector3Double(Math.PI,0,Math.PI) <!-- left --> :
+                        $object.direction.equals("up") ? new Vector3Double(0,0,Math.PI*3/2) <!-- up --> :
+                        new Vector3Double(0,0,Math.PI/2) <!-- down -->
+                    </env:property>
+                    <env:property name="direction">
+                        new String("left")
+                    </env:property>
+                    <env:property name="vision_range">
+                        new Integer(3)
+                    </env:property>
+                    <!--                    <env:property name="vision">-->
+                    <!--                        new Vector2Int(3,3)-->
+                    <!--                    </env:property>-->
                 </env:objecttype>
             </env:objecttypes>
 
@@ -68,8 +84,12 @@
                     <env:drawable objecttype="weed" width="0.7" height="0.7">
                         <env:triangle layer="0" color="green"/>
                     </env:drawable>
-                    <env:drawable objecttype="scout" width="1" height="1">
-                        <env:rectangle layer="0" color="yellow"/>
+                    <env:drawable objecttype="scout" width="1" height="1" rotation="rotation">
+                        <env:rectangle layer="0" x="0" y="0" width="0.8" height="0.8" color="#cc8899"/>
+                        <env:property name="vision_size" dynamic="true">new Vector2Double($object.vision_range,
+                            $object.vision_range)
+                        </env:property>
+                        <env:rectangle layer="-1" size="vision_size" x="2" y="0" color="#ADF3214f"/>
                     </env:drawable>
                     <env:prelayers>
                         <env:gridlayer width="1.0" height="1.0" color="black"/>
@@ -109,51 +129,51 @@
                         <env:object type="weed">
                             <env:property name="position">new Vector2Double(0, 8)</env:property>
                         </env:object>
-                        <!--                        <env:object type="weed">-->
-                        <!--                            <env:property name="position">new Vector2Double(3, 0)</env:property>-->
-                        <!--                        </env:object>-->
-                        <!--                        <env:object type="weed">-->
-                        <!--                            <env:property name="position">new Vector2Double(3, 2)</env:property>-->
-                        <!--                        </env:object>-->
-                        <!--                        <env:object type="weed">-->
-                        <!--                            <env:property name="position">new Vector2Double(3, 4)</env:property>-->
-                        <!--                        </env:object>-->
-                        <!--                        <env:object type="weed">-->
-                        <!--                            <env:property name="position">new Vector2Double(3, 6)</env:property>-->
-                        <!--                        </env:object>-->
-                        <!--                        <env:object type="weed">-->
-                        <!--                            <env:property name="position">new Vector2Double(3, 8)</env:property>-->
-                        <!--                        </env:object>-->
-                        <!--                        <env:object type="weed">-->
-                        <!--                            <env:property name="position">new Vector2Double(6, 0)</env:property>-->
-                        <!--                        </env:object>-->
-                        <!--                        <env:object type="weed">-->
-                        <!--                            <env:property name="position">new Vector2Double(6, 2)</env:property>-->
-                        <!--                        </env:object>-->
-                        <!--                        <env:object type="weed">-->
-                        <!--                            <env:property name="position">new Vector2Double(6, 4)</env:property>-->
-                        <!--                        </env:object>-->
-                        <!--                        <env:object type="weed">-->
-                        <!--                            <env:property name="position">new Vector2Double(6, 6)</env:property>-->
-                        <!--                        </env:object>-->
-                        <!--                        <env:object type="weed">-->
-                        <!--                            <env:property name="position">new Vector2Double(6, 8)</env:property>-->
-                        <!--                        </env:object>-->
-                        <!--                        <env:object type="weed">-->
-                        <!--                            <env:property name="position">new Vector2Double(9, 0)</env:property>-->
-                        <!--                        </env:object>-->
-                        <!--                        <env:object type="weed">-->
-                        <!--                            <env:property name="position">new Vector2Double(9, 2)</env:property>-->
-                        <!--                        </env:object>-->
-                        <!--                        <env:object type="weed">-->
-                        <!--                            <env:property name="position">new Vector2Double(9, 4)</env:property>-->
-                        <!--                        </env:object>-->
-                        <!--                        <env:object type="weed">-->
-                        <!--                            <env:property name="position">new Vector2Double(9, 6)</env:property>-->
-                        <!--                        </env:object>-->
-                        <!--                        <env:object type="weed">-->
-                        <!--                            <env:property name="position">new Vector2Double(9, 8)</env:property>-->
-                        <!--                        </env:object>-->
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(3, 0)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(3, 2)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(3, 4)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(3, 6)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(3, 8)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(6, 0)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(6, 2)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(6, 4)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(6, 6)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(6, 8)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(9, 0)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(9, 2)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(9, 4)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(9, 6)</env:property>
+                        </env:object>
+                        <env:object type="weed">
+                            <env:property name="position">new Vector2Double(9, 8)</env:property>
+                        </env:object>
 
 
                     </env:objects>
