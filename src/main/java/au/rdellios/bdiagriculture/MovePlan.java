@@ -23,7 +23,7 @@ public class MovePlan {
         IVector2 targetPos = (IVector2) targetObj.getProperty(Space2D.PROPERTY_POSITION);
         Object oid = scoutAgent.env.getAvatar(scoutAgent.getAgent().getDescription()).getId();
         // Continue moving until the Scout is at the targetPosition
-        while (scoutAgent.getPosition() != targetPos) {
+        while (!scoutAgent.getPosition().equals(targetPos)) {
             scoutAgent.getAgent().waitForDelay(250).get();
             //Which direction is closer? Left/Right/Up/Down
             int movement = (scoutAgent.env.getShortestDirection(scoutAgent.getPosition().getX(), targetPos.getX(), true)).getAsInteger();
