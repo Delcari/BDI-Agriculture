@@ -5,7 +5,6 @@ import jadex.bdiv3.annotation.PlanBody;
 import jadex.bdiv3.annotation.PlanCapability;
 import jadex.extension.envsupport.environment.ISpaceObject;
 import jadex.extension.envsupport.environment.space2d.Space2D;
-import jadex.extension.envsupport.math.IVector1;
 import jadex.extension.envsupport.math.IVector2;
 import jadex.extension.envsupport.math.Vector2Int;
 
@@ -18,7 +17,7 @@ public class MovePlan {
 //    protected MoveTo goal;
 
     @PlanBody
-    public void body(ISpaceObject targetObj) {
+    public void body(ISpaceObject targetObj, long overlayObjId) {
         System.out.println("Starting MovePlan...");
         IVector2 targetPos = (IVector2) targetObj.getProperty(Space2D.PROPERTY_POSITION);
         Object oid = scoutAgent.env.getAvatar(scoutAgent.getAgent().getDescription()).getId();
@@ -49,6 +48,9 @@ public class MovePlan {
                 }
             }
         }
+
+        //Remove the overlay
+        scoutAgent.env.destroySpaceObject(overlayObjId);
         System.out.println("MovePlan: Target Location Reached");
     }
 }
