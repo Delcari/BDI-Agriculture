@@ -10,11 +10,7 @@ import jadex.micro.annotation.Agent;
 import jadex.micro.annotation.AgentFeature;
 
 @Agent(type = BDIAgentFactory.TYPE)
-@Plans(
-        {
-                @Plan(trigger = @Trigger(goals = ScoutAgent.LocateTree.class), body = @Body(FindTreePlan.class)),
-                @Plan(trigger = @Trigger(goals = ScoutAgent.MoveTo.class), body = @Body(MovePlan.class))
-        })
+@Plans({@Plan(trigger = @Trigger(goals = ScoutAgent.LocateTree.class), body = @Body(FindTreesPlan.class)), @Plan(trigger = @Trigger(goals = ScoutAgent.MoveTo.class), body = @Body(MovePlan.class))})
 public class ScoutAgent extends BaseAgent {
     @AgentFeature
     protected IBDIAgentFeature bdiFeature;
@@ -25,21 +21,32 @@ public class ScoutAgent extends BaseAgent {
     @Belief
     protected ISpaceObject targetObj;
 
-    @Goal(excludemode = ExcludeMode.Never)
+    @Goal(excludemode = ExcludeMode.Never, recur = true, recurdelay = 500)
     public class LocateTree {
     }
 
-    @Goal()// deliberation=@Deliberation(inhibits={LocateTree.class}))
+    @Goal(excludemode = ExcludeMode.Never)// deliberation=@Deliberation(inhibits={LocateTree.class}))
     public class MoveTo {
         @GoalParameter
         protected ISpaceObject targetObj;
+        @GoalParameter
+        protected long overlayObjId;
 
         public ISpaceObject getTargetObj() {
             return targetObj;
         }
 
+        public long getOverlayObjId() {
+            return overlayObjId;
+        }
+
         public MoveTo(ISpaceObject targetObj) {
             this.targetObj = targetObj;
+        }
+
+        public MoveTo(ISpaceObject targetObj, long overlayObjId) {
+            this.targetObj = targetObj;
+            this.overlayObjId = overlayObjId;
         }
     }
 
