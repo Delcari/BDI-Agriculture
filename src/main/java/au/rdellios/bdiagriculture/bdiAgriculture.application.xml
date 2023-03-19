@@ -30,6 +30,8 @@
                         new Integer((int)((Math.random()*25)))
                     </env:property>
                 </env:objecttype>
+                <env:objecttype name="overlay_r">
+                </env:objecttype>
 
 
                 <env:objecttype name="scout">
@@ -83,11 +85,14 @@
                         <env:triangle layer="0" color="green"/>
                     </env:drawable>
                     <env:drawable objecttype="scout" width="1" height="1" rotation="rotation">
-                        <env:rectangle layer="0" x="0" y="0" width="0.8" height="0.8" color="#cc8899"/>
+                        <env:ellipse layer="0" x="0" y="0" width="0.8" height="0.8" color="#cc8899"/>
                         <env:property name="vision_size" dynamic="true">new Vector2Double($object.vision_range,
                             $object.vision_range)
                         </env:property>
                         <env:rectangle layer="-1" size="vision_size" x="2" y="0" color="#ADF3214f"/>
+                    </env:drawable>
+                    <env:drawable objecttype="overlay_r" width="1" height="1">
+                        <env:ellipse x="0" y="0" size="new Vector2Int(1,1)" layer="1" color="color"/>
                     </env:drawable>
                     <env:prelayers>
                         <env:gridlayer width="1.0" height="1.0" color="black"/>
