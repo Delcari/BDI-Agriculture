@@ -6,7 +6,6 @@ import jadex.bdiv3.annotation.PlanCapability;
 import jadex.extension.envsupport.environment.ISpaceObject;
 import jadex.extension.envsupport.environment.space2d.Space2D;
 import jadex.extension.envsupport.math.IVector2;
-import jadex.extension.envsupport.math.Vector2Int;
 
 @Plan
 public class MovePlan {
@@ -18,6 +17,8 @@ public class MovePlan {
 
     @PlanBody
     public void body(ISpaceObject targetObj, long overlayObjId) {
+        Movement movement = new Movement();
+
         System.out.println("Starting MovePlan...");
         IVector2 targetPos = (IVector2) targetObj.getProperty(Space2D.PROPERTY_POSITION);
         Object oid = scoutAgent.env.getAvatar(scoutAgent.getAgent().getDescription()).getId();
@@ -25,26 +26,25 @@ public class MovePlan {
         while (!scoutAgent.getPosition().equals(targetPos)) {
             scoutAgent.getAgent().waitForDelay(250).get();
             //Which direction is closer? Left/Right/Up/Down
-            int movement = (scoutAgent.env.getShortestDirection(scoutAgent.getPosition().getX(), targetPos.getX(), true)).getAsInteger();
+            int closestDir = (scoutAgent.env.getShortestDirection(scoutAgent.getPosition().getX(), targetPos.getX(), true)).getAsInteger();
             //Move in specified direction
-            if (movement != 0) {
-                if ((movement < 0)) {
-                    //Rotate Scout to face left
-                    scoutAgent.myself.setProperty("direction", "left");
+            if (closestDir != 0) {
+                if ((closestDir < 0)) {
+                    movement.Move(scoutAgent.getEnvironment(), scoutAgent.getMyself(), Movement.MoveDir.LEFT);
                 } else {
-                    scoutAgent.myself.setProperty("direction", "right");
+                    movement.Move(scoutAgent.getEnvironment(), scoutAgent.getMyself(), Movement.MoveDir.RIGHT);
                 }
                 //Move towards target
-                scoutAgent.env.setPosition(oid, new Vector2Int(scoutAgent.getPosition().getX().getAsInteger() + movement, scoutAgent.getPosition().getYAsInteger()));
+                //scoutAgent.env.setPosition(oid, new Vector2Int(scoutAgent.getPosition().getX().getAsInteger() + closestDir, scoutAgent.getPosition().getYAsInteger()));
             } else {
-                movement = (scoutAgent.env.getShortestDirection(scoutAgent.getPosition().getY(), targetPos.getY(), false)).getAsInteger();
-                if (movement != 0) {
-                    if ((movement < 0)) {
-                        scoutAgent.myself.setProperty("direction", "up");
+                closestDir = (scoutAgent.env.getShortestDirection(scoutAgent.getPosition().getY(), targetPos.getY(), false)).getAsInteger();
+                if (closestDir != 0) {
+                    if ((closestDir < 0)) {
+                        movement.Move(scoutAgent.getEnvironment(), scoutAgent.getMyself(), Movement.MoveDir.UP);
                     } else {
-                        scoutAgent.myself.setProperty("direction", "down");
+                        movement.Move(scoutAgent.getEnvironment(), scoutAgent.getMyself(), Movement.MoveDir.DOWN);
                     }
-                    scoutAgent.env.setPosition(oid, new Vector2Int(scoutAgent.getPosition().getX().getAsInteger(), scoutAgent.getPosition().getYAsInteger() + movement));
+                    //scoutAgent.env.setPosition(oid, new Vector2Int(scoutAgent.getPosition().getX().getAsInteger(), scoutAgent.getPosition().getYAsInteger() + closestDir));
                 }
             }
         }
