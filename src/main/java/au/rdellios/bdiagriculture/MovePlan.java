@@ -17,40 +17,35 @@ public class MovePlan {
 
     @PlanBody
     public void body(ISpaceObject targetObj, long overlayObjId) {
-        Movement movement = new Movement();
-
         System.out.println("Starting MovePlan...");
         IVector2 targetPos = (IVector2) targetObj.getProperty(Space2D.PROPERTY_POSITION);
-        Object oid = scoutAgent.env.getAvatar(scoutAgent.getAgent().getDescription()).getId();
+        Object oid = this.scoutAgent.env.getAvatar(this.scoutAgent.getAgent().getDescription()).getId();
         // Continue moving until the Scout is at the targetPosition
-        while (!scoutAgent.getPosition().equals(targetPos)) {
-            scoutAgent.getAgent().waitForDelay(250).get();
+        while (!this.scoutAgent.getPosition().equals(targetPos)) {
+            this.scoutAgent.getAgent().waitForDelay(250).get();
             //Which direction is closer? Left/Right/Up/Down
-            int closestDir = (scoutAgent.env.getShortestDirection(scoutAgent.getPosition().getX(), targetPos.getX(), true)).getAsInteger();
+            int closestDir = (this.scoutAgent.env.getShortestDirection(this.scoutAgent.getPosition().getX(), targetPos.getX(), true)).getAsInteger();
             //Move in specified direction
             if (closestDir != 0) {
                 if ((closestDir < 0)) {
-                    movement.Move(scoutAgent.getEnvironment(), scoutAgent.getMyself(), Movement.MoveDir.LEFT);
+                    this.scoutAgent.Move(this.scoutAgent.getEnvironment(), this.scoutAgent.getMyself(), MoveDir.LEFT);
                 } else {
-                    movement.Move(scoutAgent.getEnvironment(), scoutAgent.getMyself(), Movement.MoveDir.RIGHT);
+                    this.scoutAgent.Move(this.scoutAgent.getEnvironment(), this.scoutAgent.getMyself(), MoveDir.RIGHT);
                 }
-                //Move towards target
-                //scoutAgent.env.setPosition(oid, new Vector2Int(scoutAgent.getPosition().getX().getAsInteger() + closestDir, scoutAgent.getPosition().getYAsInteger()));
             } else {
-                closestDir = (scoutAgent.env.getShortestDirection(scoutAgent.getPosition().getY(), targetPos.getY(), false)).getAsInteger();
+                closestDir = (this.scoutAgent.env.getShortestDirection(this.scoutAgent.getPosition().getY(), targetPos.getY(), false)).getAsInteger();
                 if (closestDir != 0) {
                     if ((closestDir < 0)) {
-                        movement.Move(scoutAgent.getEnvironment(), scoutAgent.getMyself(), Movement.MoveDir.UP);
+                        this.scoutAgent.Move(this.scoutAgent.getEnvironment(), this.scoutAgent.getMyself(), MoveDir.UP);
                     } else {
-                        movement.Move(scoutAgent.getEnvironment(), scoutAgent.getMyself(), Movement.MoveDir.DOWN);
+                        this.scoutAgent.Move(this.scoutAgent.getEnvironment(), this.scoutAgent.getMyself(), MoveDir.DOWN);
                     }
-                    //scoutAgent.env.setPosition(oid, new Vector2Int(scoutAgent.getPosition().getX().getAsInteger(), scoutAgent.getPosition().getYAsInteger() + closestDir));
                 }
             }
         }
 
         //Remove the overlay
-        scoutAgent.env.destroySpaceObject(overlayObjId);
+        this.scoutAgent.env.destroySpaceObject(overlayObjId);
         System.out.println("MovePlan: Target Location Reached");
     }
 }
