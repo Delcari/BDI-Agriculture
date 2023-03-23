@@ -4,6 +4,7 @@ package au.rdellios.bdiagriculture;
 import jadex.bdiv3.BDIAgentFactory;
 import jadex.bdiv3.annotation.*;
 import jadex.bdiv3.features.IBDIAgentFeature;
+import jadex.bdiv3.runtime.ChangeEvent;
 import jadex.bridge.service.annotation.OnStart;
 import jadex.extension.envsupport.environment.ISpaceObject;
 import jadex.extension.envsupport.environment.space2d.Grid2D;
@@ -13,45 +14,51 @@ import jadex.extension.envsupport.math.Vector2Int;
 import jadex.micro.annotation.Agent;
 import jadex.micro.annotation.AgentFeature;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Agent(type = BDIAgentFactory.TYPE)
-@Plans({@Plan(trigger = @Trigger(goals = ScoutAgent.LocateTree.class), body = @Body(FindTreesPlan.class)), @Plan(trigger = @Trigger(goals = ScoutAgent.MoveTo.class), body = @Body(MovePlan.class))})
+@Plans({
+        @Plan(trigger = @Trigger(goals = ScoutAgent.LocateTree.class), body = @Body(FindTreesPlan.class)),
+        @Plan(trigger = @Trigger(goals = ScoutAgent.MoveTo.class), body = @Body(MovePlan.class)),
+        @Plan(trigger = @Trigger(goals = ScoutAgent.InspectTree.class), body = @Body(InspectTreePlan.class)),})
 public class ScoutAgent extends BaseAgent {
     @AgentFeature
     protected IBDIAgentFeature bdiFeature;
 
-    //@Belief
-    //protected List<ISpaceObject> trees = new ArrayList<ISpaceObject>();
-
     @Belief
-    protected ISpaceObject targetObj;
+    protected List<ISpaceObject> trees = new ArrayList<ISpaceObject>();
+    protected List<ISpaceObject> exploredTrees = new ArrayList<ISpaceObject>();
 
-    @Goal(excludemode = ExcludeMode.Never, recur = true, recurdelay = 500)
+
+    @Goal(recur = true)
     public class LocateTree {
     }
 
-    @Goal(excludemode = ExcludeMode.Never)// deliberation=@Deliberation(inhibits={LocateTree.class}))
+    @Goal(deliberation = @Deliberation(cardinalityone = true))
     public class MoveTo {
+        @GoalCreationCondition(rawevents = @RawEvent(value = ChangeEvent.FACTADDED, second = "trees"))
+        public static boolean checkTree(ISpaceObject obj) {
+            return obj != null;
+        }
+
+        public MoveTo() {
+        }
+    }
+
+    @Goal
+    public class InspectTree {
         @GoalParameter
         protected ISpaceObject targetObj;
-        @GoalParameter
-        protected long overlayObjId;
 
         public ISpaceObject getTargetObj() {
             return targetObj;
         }
 
-        public long getOverlayObjId() {
-            return overlayObjId;
-        }
-
-        public MoveTo(ISpaceObject targetObj) {
+        public InspectTree(ISpaceObject targetObj) {
             this.targetObj = targetObj;
-        }
-
-        public MoveTo(ISpaceObject targetObj, long overlayObjId) {
-            this.targetObj = targetObj;
-            this.overlayObjId = overlayObjId;
         }
     }
 
@@ -82,6 +89,13 @@ public class ScoutAgent extends BaseAgent {
         //Set the position of the object
         env.setPosition(oid, newPos);
         return newPos;
+    }
+
+    //Update the highlight of an object
+    public static ISpaceObject updateHighlight(ISpaceObject obj, Color color) {
+        if (obj.getProperty("highlight").equals(new Color(149, 255, 83, 85))) return obj;
+        obj.setProperty("highlight", color);
+        return obj;
     }
 
     @OnStart

@@ -29,7 +29,7 @@ public class FindTreePlan {
         }
         try {
             System.out.println("Dispatching subgoal - MoveTo...");
-            rplan.dispatchSubgoal(scoutAgent.new MoveTo(nearObj)).get();
+            //rplan.dispatchSubgoal(scoutAgent.new MoveTo(nearObj)).get();
         } catch (Exception e) {
             System.out.println("Exception: " + e);
         }
