@@ -16,6 +16,7 @@
         <import>jadex.bridge.service.clock.IClockService</import>
         <import>jadex.extension.envsupport.dataview.*</import>
         <import>jadex.extension.envsupport.observer.perspective.*</import>
+        <import>java.awt.Color</import>
     </imports>
 
     <!-- Space types of this application. Spaces are shared by agents of the same application. -->
@@ -26,11 +27,17 @@
             <!-- The objecttypes of this environment. -->
             <env:objecttypes>
                 <env:objecttype name="weed">
+                    <env:property name="highlight">new Color(0, 0, 0, 0)</env:property>
                     <env:property name="age">
                         new Integer((int)((Math.random()*25)))
                     </env:property>
-                </env:objecttype>
-                <env:objecttype name="overlay_r">
+                    <env:property name="lastInteraction">
+                        new Long(0)
+                    </env:property>
+                    <env:property name="interactCooldown" dynamic="true">
+                        ($object.lastInteraction - System.currentTimeMillis() + 10000) >= 0 ? new
+                        Long($object.lastInteraction - System.currentTimeMillis() + 10000) : new Long(0)
+                    </env:property>
                 </env:objecttype>
 
 
@@ -81,8 +88,9 @@
             <env:perspectives>
                 <env:perspective name="abstract" class="Perspective2D" objectplacement="center">
 
-                    <env:drawable objecttype="weed" width="0.7" height="0.7">
-                        <env:triangle layer="0" color="green"/>
+                    <env:drawable objecttype="weed" width="1" height="1">
+                        <env:ellipse x="0" y="0" size="new Vector2Int(1,1)" layer="0" color="highlight"/>
+                        <env:triangle layer="-1" color="green" size="new Vector2Double(0.8,0.8)"/>
                     </env:drawable>
                     <env:drawable objecttype="scout" width="1" height="1" rotation="rotation">
                         <env:ellipse layer="0" x="0" y="0" width="0.8" height="0.8" color="#cc8899"/>
@@ -90,9 +98,6 @@
                             $object.vision_range)
                         </env:property>
                         <env:rectangle layer="-1" size="vision_size" x="2" y="0" color="#ADF3214f"/>
-                    </env:drawable>
-                    <env:drawable objecttype="overlay_r" width="1" height="1">
-                        <env:ellipse x="0" y="0" size="new Vector2Int(1,1)" layer="1" color="color"/>
                     </env:drawable>
                     <env:prelayers>
                         <env:gridlayer width="1.0" height="1.0" color="black"/>
