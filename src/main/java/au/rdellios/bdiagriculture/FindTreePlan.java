@@ -20,7 +20,8 @@ public class FindTreePlan {
     @PlanBody
     public void body() {
         System.out.println("Starting FindTreePlan...");
-        ISpaceObject nearObj = scoutAgent.env.getNearestObject(scoutAgent.getPosition(), new Vector1Int(5), "weed");
+        int visionRange = (int) scoutAgent.getMyself().getProperty("vision_range");
+        ISpaceObject nearObj = scoutAgent.env.getNearestObject(scoutAgent.getPosition(), new Vector1Int(visionRange), "weed");
         if (nearObj != null && !scoutAgent.trees.contains(nearObj) && !scoutAgent.exploredTrees.contains(nearObj)) {
             scoutAgent.trees.add(nearObj);
             System.out.println("FindTreePlan: Object Found");
