@@ -26,6 +26,15 @@ public class InspectTreePlan {
     @PlanBody
     public void body(ISpaceObject targetTree) {
         System.out.println("Starting InspectTreePlan...");
+
+        //Scout instead checks whether the tree is in an acceptable state to be inspected
+        //Optimal - Suboptimal - Treated
+        //If the state is treated - this means the tree has been interacted with by the other agent, and requires another review.
+        //The tree could still be in a suboptimal state or optimal state, but the scout will not know this until it has been reinspected.
+        //The tree can only be inspected after the applied treatment cooldown has been met.
+        targetTree.setProperty("cropLoad", "subOptimal");
+
+        //Move this to the ActiveAgent - ActiveAgent interacts with the tree - Sets cooldown, telling the scout when to check the tree again for updates.
         //Log the time of the last interaction with the tree
         targetTree.setProperty("lastInteraction", System.currentTimeMillis());
         //Highlight the tree
