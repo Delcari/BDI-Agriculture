@@ -23,11 +23,12 @@ import java.util.List;
 @Goals(@Goal(clazz=ScoutBoundary.class,
         publish=@Publish(type= IScoutBoundary.class)))
 @Plans({
-        //@Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(FindTreesPlan.class)),
+        @Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(FindTreesPlan.class)),
         //@Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(FindTreePlan.class)),
         @Plan(trigger = @Trigger(goals = ScoutAgent.MoveTo.class), body = @Body(MovePlan.class)),
         @Plan(trigger = @Trigger(goals = ScoutAgent.InspectTree.class), body = @Body(InspectTreePlan.class)),
-        @Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(AreaScoutPlan.class)),})
+        //@Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(AreaScoutPlan.class),
+         })
 public class ScoutAgent extends BaseAgent {
     @AgentFeature
     protected IBDIAgentFeature bdiFeature;
@@ -65,27 +66,27 @@ public class ScoutAgent extends BaseAgent {
         }
     }
 
-    public IVector2 Move(Grid2D env, ISpaceObject obj, MoveDir moveDir) {
+    public IVector2 Move(Grid2D env, ISpaceObject obj, Direction moveDir) {
         Object oid = obj.getId();
         IVector2 newPos = (IVector2) obj.getProperty(Space2D.PROPERTY_POSITION);
         //Which direction is the agent going to move in?
         switch (moveDir) {
             case LEFT:
                 //Update the direction the object is facing
-                obj.setProperty("direction", "left");
+                obj.setProperty("direction", moveDir.toString());
                 //Update the target position
                 newPos.add(new Vector2Int(-1, 0));
                 break;
             case RIGHT:
-                obj.setProperty("direction", "right");
+                obj.setProperty("direction", moveDir.toString());
                 newPos.add(new Vector2Int(1, 0));
                 break;
             case UP:
-                obj.setProperty("direction", "up");
+                obj.setProperty("direction", moveDir.toString());
                 newPos.add(new Vector2Int(0, -1));
                 break;
             case DOWN:
-                obj.setProperty("direction", "down");
+                obj.setProperty("direction", moveDir.toString());
                 newPos.add(new Vector2Int(0, 1));
                 break;
         }
@@ -95,23 +96,23 @@ public class ScoutAgent extends BaseAgent {
     }
 
     //Which direction should the Agent move in to get closer to the target position?
-    public MoveDir whichDirection(Grid2D env, IVector2 currentPos, IVector2 targetPos)
+    public Direction whichDirection(Grid2D env, IVector2 currentPos, IVector2 targetPos)
     {
         int closestDir = (env.getShortestDirection(currentPos.getX(), targetPos.getX(), true)).getAsInteger();
         //Which direction is the closest?
         if (closestDir != 0) {
             if ((closestDir < 0)) {
-                return MoveDir.LEFT;
+                return Direction.LEFT;
             } else {
-                return MoveDir.RIGHT;
+                return Direction.RIGHT;
             }
         } else {
             closestDir = (env.getShortestDirection(currentPos.getY(), targetPos.getY(), false)).getAsInteger();
             if (closestDir != 0) {
                 if ((closestDir < 0)) {
-                    return MoveDir.UP;
+                    return Direction.UP;
                 } else {
-                    return MoveDir.DOWN;
+                    return Direction.DOWN;
                 }
             }
         }

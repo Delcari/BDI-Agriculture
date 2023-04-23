@@ -32,7 +32,8 @@ public class FindTreesPlan {
         //Get all objects within 3 spaces of the scout
         Set<ISpaceObject> nearGridObjects = scoutAgent.getEnvironment().getNearGridObjects(scoutAgent.getPosition(), visionRange, types);
         //Get direction of the scout
-        String direction = (String) scoutAgent.getMyself().getProperty("direction");
+
+        Direction direction = Direction.valueOf((String) scoutAgent.getMyself().getProperty("direction"));
         //Objects in View
         List<ISpaceObject> overlayObjs = new ArrayList<>();
         int objectsFound = 0;
@@ -49,7 +50,7 @@ public class FindTreesPlan {
 
             //Check if the nearGridObject is in the direction the scout is facing
             switch (direction) {
-                case "left":
+                case LEFT:
                     if ((xDiff >= -3 && xDiff < 0) && (yDiff <= 1 && yDiff >= -1)) {
                         //Apply a highlight to the object, if it's within the scouts vision range
                         overlayObjs.add(ScoutAgent.updateHighlight(nearGridObject, new Color(246, 213, 46, 85)));
@@ -62,7 +63,7 @@ public class FindTreesPlan {
                     }
 
                     break;
-                case "right":
+                case RIGHT:
                     if (xDiff > 0 && xDiff <= 3 && (yDiff <= 1 && yDiff >= -1)) {
                         overlayObjs.add(ScoutAgent.updateHighlight(nearGridObject, new Color(246, 213, 46, 85)));
                         if (scoutAgent.trees.contains(nearGridObject) || scoutAgent.exploredTrees.contains(nearGridObject))
@@ -71,7 +72,7 @@ public class FindTreesPlan {
                         objectsFound++;
                     }
                     break;
-                case "up":
+                case UP:
                     if (yDiff >= -3 && yDiff < 0 && (xDiff <= 1 && xDiff >= -1)) {
                         //  ScoutAgent.trees.add(nearGridObject);
                         overlayObjs.add(ScoutAgent.updateHighlight(nearGridObject, new Color(246, 213, 46, 85)));
@@ -81,7 +82,7 @@ public class FindTreesPlan {
                         objectsFound++;
                     }
                     break;
-                case "down":
+                case DOWN:
                     if (yDiff > 0 && yDiff <= 3 && (xDiff <= 1 && xDiff >= -1)) {
                         // ScoutAgent.trees.add(nearGridObject);
                         overlayObjs.add(ScoutAgent.updateHighlight(nearGridObject, new Color(246, 213, 46, 85)));

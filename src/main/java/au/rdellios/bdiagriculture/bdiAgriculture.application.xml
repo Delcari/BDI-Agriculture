@@ -47,13 +47,13 @@
                     <env:property name="position" event="true"/>
                     <env:property name="rotation" dynamic="true">
                         <!-- Rotate the scout to face the direction it is moving -->
-                        $object.direction == null <!--right--> || $object.direction.equals("right") ? null :
-                        $object.direction.equals("left") ? new Vector3Double(Math.PI,0,Math.PI) <!-- left --> :
-                        $object.direction.equals("up") ? new Vector3Double(0,0,Math.PI*3/2) <!-- up --> :
+                        $object.direction == null <!--right--> || $object.direction.equals("RIGHT") ? null :
+                        $object.direction.equals("LEFT") ? new Vector3Double(Math.PI,0,Math.PI) <!-- left --> :
+                        $object.direction.equals("UP") ? new Vector3Double(0,0,Math.PI*3/2) <!-- up --> :
                         new Vector3Double(0,0,Math.PI/2) <!-- down -->
                     </env:property>
                     <env:property name="direction">
-                        new String("left")
+                        new String("LEFT")
                     </env:property>
                     <env:property name="vision_range">
                         new Integer(3)

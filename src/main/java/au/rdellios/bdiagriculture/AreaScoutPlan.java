@@ -78,7 +78,7 @@ public class AreaScoutPlan {
                     if (this.scoutAgent.getPosition().equals(startPos)) targetPos = endPos;
 
                     //Find which direction the scout should move in
-                    MoveDir dir = this.scoutAgent.whichDirection(this.scoutAgent.env, this.scoutAgent.getPosition(), targetPos);
+                    Direction dir = this.scoutAgent.whichDirection(this.scoutAgent.env, this.scoutAgent.getPosition(), targetPos);
                     //Move the scout
                     if (dir != null) {
                         this.scoutAgent.Move(this.scoutAgent.getEnvironment(), this.scoutAgent.getMyself(), dir);
@@ -111,7 +111,7 @@ public class AreaScoutPlan {
 
                     if (this.scoutAgent.getPosition().equals(startPos)) targetPos = endPos;
 
-                    MoveDir dir = this.scoutAgent.whichDirection(this.scoutAgent.env, this.scoutAgent.getPosition(), targetPos);
+                    Direction dir = this.scoutAgent.whichDirection(this.scoutAgent.env, this.scoutAgent.getPosition(), targetPos);
                     if (dir != null) {
                         this.scoutAgent.Move(this.scoutAgent.getEnvironment(), this.scoutAgent.getMyself(), dir);
                     }

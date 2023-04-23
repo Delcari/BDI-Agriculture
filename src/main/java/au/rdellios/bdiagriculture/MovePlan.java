@@ -41,7 +41,7 @@ public class MovePlan {
         while (!this.scoutAgent.getPosition().equals(targetPos)) {
             rplan.waitFor(250).get();
             //Which direction is closer? Left/Right/Up/Down
-            MoveDir dir = this.scoutAgent.whichDirection(this.scoutAgent.env, this.scoutAgent.getPosition(), targetPos);
+            Direction dir = this.scoutAgent.whichDirection(this.scoutAgent.env, this.scoutAgent.getPosition(), targetPos);
             if (dir != null)
             {
                 this.scoutAgent.Move(this.scoutAgent.getEnvironment(), this.scoutAgent.getMyself(), dir);

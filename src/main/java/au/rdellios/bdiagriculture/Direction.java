@@ -1,5 +1,5 @@
 package au.rdellios.bdiagriculture;
 
-public enum MoveDir {
+public enum Direction {
     LEFT, RIGHT, UP, DOWN
 }
