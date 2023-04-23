@@ -41,57 +41,15 @@ public class FindTreesPlan {
         //Loop through the nearGridObjects
         System.out.println("FindTreesPlan: " + nearGridObjects.size() + " objects Found surrounding the scout at a max distance of " + visionRange);
         for (ISpaceObject nearGridObject : nearGridObjects) {
-            //Get the position of the nearGridObject
-            IVector2 objPosition = (IVector2) nearGridObject.getProperty(Space2D.PROPERTY_POSITION);
-
-            //Get the position difference between the scout and the nearGridObject
-            int xDiff = objPosition.getXAsInteger() - scoutAgent.getPosition().getXAsInteger();
-            int yDiff = objPosition.getYAsInteger() - scoutAgent.getPosition().getYAsInteger();
-
-            //Check if the nearGridObject is in the direction the scout is facing
-            switch (direction) {
-                case LEFT:
-                    if ((xDiff >= -3 && xDiff < 0) && (yDiff <= 1 && yDiff >= -1)) {
-                        //Apply a highlight to the object, if it's within the scouts vision range
-                        overlayObjs.add(ScoutAgent.updateHighlight(nearGridObject, new Color(246, 213, 46, 85)));
-                        //Ignore the object if it's already been added to the trees list
-                        if (scoutAgent.trees.contains(nearGridObject) || scoutAgent.exploredTrees.contains(nearGridObject))
-                            continue;
-                        //Add the object to the trees list
-                        scoutAgent.trees.add(nearGridObject);
-                        objectsFound++;
-                    }
-
-                    break;
-                case RIGHT:
-                    if (xDiff > 0 && xDiff <= 3 && (yDiff <= 1 && yDiff >= -1)) {
-                        overlayObjs.add(ScoutAgent.updateHighlight(nearGridObject, new Color(246, 213, 46, 85)));
-                        if (scoutAgent.trees.contains(nearGridObject) || scoutAgent.exploredTrees.contains(nearGridObject))
-                            continue;
-                        scoutAgent.trees.add(nearGridObject);
-                        objectsFound++;
-                    }
-                    break;
-                case UP:
-                    if (yDiff >= -3 && yDiff < 0 && (xDiff <= 1 && xDiff >= -1)) {
-                        //  ScoutAgent.trees.add(nearGridObject);
-                        overlayObjs.add(ScoutAgent.updateHighlight(nearGridObject, new Color(246, 213, 46, 85)));
-                        if (scoutAgent.trees.contains(nearGridObject) || scoutAgent.exploredTrees.contains(nearGridObject))
-                            continue;
-                        scoutAgent.trees.add(nearGridObject);
-                        objectsFound++;
-                    }
-                    break;
-                case DOWN:
-                    if (yDiff > 0 && yDiff <= 3 && (xDiff <= 1 && xDiff >= -1)) {
-                        // ScoutAgent.trees.add(nearGridObject);
-                        overlayObjs.add(ScoutAgent.updateHighlight(nearGridObject, new Color(246, 213, 46, 85)));
-                        if (scoutAgent.trees.contains(nearGridObject) || scoutAgent.exploredTrees.contains(nearGridObject))
-                            continue;
-                        scoutAgent.trees.add(nearGridObject);
-                        objectsFound++;
-                    }
-                    break;
+            if (scoutAgent.inVision(nearGridObject)) {
+                //Apply a highlight to the object, if it's within the scouts vision range
+                overlayObjs.add(ScoutAgent.updateHighlight(nearGridObject, new Color(246, 213, 46, 85)));
+                //Ignore the object if it's already been added to the trees list
+                if (scoutAgent.trees.contains(nearGridObject) || scoutAgent.exploredTrees.contains(nearGridObject))
+                    continue;
+                //Add the object to the trees list
+                scoutAgent.trees.add(nearGridObject);
+                objectsFound++;
             }
         }
         rplan.waitFor(250).get();

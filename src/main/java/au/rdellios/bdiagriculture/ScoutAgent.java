@@ -20,15 +20,16 @@ import java.util.List;
 
 
 @Agent(type = BDIAgentFactory.TYPE)
-@Goals(@Goal(clazz=ScoutBoundary.class,
-        publish=@Publish(type= IScoutBoundary.class)))
+@Goals(@Goal(clazz = ScoutBoundary.class,
+        publish = @Publish(type = IScoutBoundary.class)))
 @Plans({
         @Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(FindTreesPlan.class)),
         //@Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(FindTreePlan.class)),
         @Plan(trigger = @Trigger(goals = ScoutAgent.MoveTo.class), body = @Body(MovePlan.class)),
         @Plan(trigger = @Trigger(goals = ScoutAgent.InspectTree.class), body = @Body(InspectTreePlan.class)),
         //@Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(AreaScoutPlan.class),
-         })
+})
+
 public class ScoutAgent extends BaseAgent {
     @AgentFeature
     protected IBDIAgentFeature bdiFeature;
@@ -95,9 +96,39 @@ public class ScoutAgent extends BaseAgent {
         return newPos;
     }
 
+    //Check if the object is within the vision range of the agent
+    public boolean inVision(ISpaceObject obj) {
+        int visionRange = (int) this.getMyself().getProperty("vision_range");
+        Direction direction = Direction.valueOf((String) this.getMyself().getProperty("direction"));
+        IVector2 objPosition = (IVector2) obj.getProperty(Space2D.PROPERTY_POSITION);
+
+        //Get the position difference between the agent and the object
+        int xDiff = objPosition.getXAsInteger() - this.getPosition().getXAsInteger();
+        int yDiff = objPosition.getYAsInteger() - this.getPosition().getYAsInteger();
+
+        switch (direction) {
+            case LEFT:
+                if ((xDiff >= -visionRange && xDiff < 0) && (yDiff <= Math.floor(visionRange / 2) && yDiff >= -Math.floor(visionRange / 2)))
+                    return true;
+                break;
+            case RIGHT:
+                if ((xDiff > 0 && xDiff <= visionRange) && (yDiff <= Math.floor(visionRange / 2) && yDiff >= -Math.floor(visionRange / 2)))
+                    return true;
+                break;
+            case UP:
+                if ((yDiff >= -visionRange && yDiff < 0) && (xDiff <= Math.floor(visionRange / 2) && xDiff >= -Math.floor(visionRange / 2)))
+                    return true;
+                break;
+            case DOWN:
+                if ((yDiff > 0 && yDiff <= visionRange) && (xDiff <= Math.floor(visionRange / 2) && xDiff >= -Math.floor(visionRange / 2)))
+                    return true;
+                break;
+        }
+        return false;
+    }
+
     //Which direction should the Agent move in to get closer to the target position?
-    public Direction whichDirection(Grid2D env, IVector2 currentPos, IVector2 targetPos)
-    {
+    public Direction whichDirection(Grid2D env, IVector2 currentPos, IVector2 targetPos) {
         int closestDir = (env.getShortestDirection(currentPos.getX(), targetPos.getX(), true)).getAsInteger();
         //Which direction is the closest?
         if (closestDir != 0) {
