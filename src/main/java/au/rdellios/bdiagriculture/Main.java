@@ -16,5 +16,7 @@ public class Main {
         IExternalAccess platform = Starter.createPlatform(platformConfiguration).get();
         CreationInfo ci = new CreationInfo().setFilename("src/main/java/au/rdellios/bdiagriculture/bdiAgriculture.application.xml");
         platform.createComponent(ci).get();
+        ci = new CreationInfo().setFilename("au/rdellios/bdiagriculture/InterfaceBDI.class");
+        platform.createComponent(ci).get();
     }
 }
