@@ -53,6 +53,14 @@ public class AreaScoutPlan {
                 startPos = new Vector2Int(start.getXAsInteger(), i * visionRange + 1 + start.getYAsInteger());
                 endPos = new Vector2Int(end.getXAsInteger(), startPos.getYAsInteger());
 
+                //If the scout is on the last pass, check if the end position is outside the boundary
+                if (i==numPasses - 1) {
+                    if (endPos.getYAsInteger() > end.getYAsInteger()) {
+                        endPos = new Vector2Int(endPos.getXAsInteger(), end.getYAsInteger());
+                        startPos = new Vector2Int(startPos.getXAsInteger(), end.getYAsInteger());
+                    }
+                }
+
                 //Check which position is closer to the scout
                 if (!scoutAgent.isClosestObj(startPos, endPos, this.scoutAgent.getPosition())) {
                     IVector2 temp = startPos;
@@ -83,6 +91,13 @@ public class AreaScoutPlan {
             for (int i = 0; i < numPasses; i++) {
                 startPos = new Vector2Int(i * visionRange + 1 + start.getXAsInteger(), start.getYAsInteger());
                 endPos = new Vector2Int(startPos.getXAsInteger(), end.getYAsInteger());
+
+                if (i==numPasses - 1) {
+                    if (endPos.getXAsInteger() > end.getXAsInteger()) {
+                        endPos = new Vector2Int(end.getXAsInteger(), endPos.getYAsInteger());
+                        startPos = new Vector2Int(end.getXAsInteger(), startPos.getYAsInteger());
+                    }
+                }
 
                 if (!scoutAgent.isClosestObj(startPos, endPos, this.scoutAgent.getPosition())) {
                     IVector2 temp = startPos;
