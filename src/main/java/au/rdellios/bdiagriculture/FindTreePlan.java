@@ -21,7 +21,8 @@ public class FindTreePlan {
     public void body() {
         System.out.println("Starting FindTreePlan...");
         ISpaceObject nearObj = scoutAgent.env.getNearestObject(scoutAgent.getPosition(), new Vector1Int(5), "weed");
-        if (nearObj != null) {
+        if (nearObj != null && !scoutAgent.trees.contains(nearObj) && !scoutAgent.exploredTrees.contains(nearObj)) {
+            scoutAgent.trees.add(nearObj);
             System.out.println("FindTreePlan: Object Found");
         } else {
             System.out.println("FindTreePlan: No Objects Found");
