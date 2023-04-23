@@ -21,13 +21,13 @@ import java.util.List;
 
 @Agent(type = BDIAgentFactory.TYPE)
 @Goals(@Goal(clazz = ScoutBoundary.class,
-        publish = @Publish(type = IScoutBoundary.class)))
+        publish = @Publish(type = IScoutBoundary.class), deliberation = @Deliberation(inhibits = ScoutAgent.MoveTo.class)))
 @Plans({
-        @Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(FindTreesPlan.class)),
+        @Plan(trigger = @Trigger(goals = ScoutAgent.LocateTree.class), body = @Body(FindTreesPlan.class)),
         //@Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(FindTreePlan.class)),
         @Plan(trigger = @Trigger(goals = ScoutAgent.MoveTo.class), body = @Body(MovePlan.class)),
         @Plan(trigger = @Trigger(goals = ScoutAgent.InspectTree.class), body = @Body(InspectTreePlan.class)),
-        //@Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(AreaScoutPlan.class),
+        @Plan (trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(AreaScoutPlan.class)),
 })
 
 public class ScoutAgent extends BaseAgent {
@@ -38,9 +38,9 @@ public class ScoutAgent extends BaseAgent {
     protected List<ISpaceObject> exploredTrees = new ArrayList<ISpaceObject>();
 
 
-//    @Goal(recur = true)
-//    public class LocateTree {
-//    }
+    @Goal(recur = true)
+    public class LocateTree {
+    }
 
     @Goal(deliberation = @Deliberation(cardinalityone = true))
     public class MoveTo {
@@ -170,7 +170,7 @@ public class ScoutAgent extends BaseAgent {
     @OnStart
     public void body() {
         System.out.println("Agent Created: ScoutAgent");
-        //bdiFeature.dispatchTopLevelGoal(new LocateTree()).get();
+        bdiFeature.dispatchTopLevelGoal(new LocateTree()).get();
     }
 }
 
