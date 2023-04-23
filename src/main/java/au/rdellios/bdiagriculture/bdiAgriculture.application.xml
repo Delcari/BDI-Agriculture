@@ -23,6 +23,8 @@
     <extensiontypes>
         <!-- Declaration of a grid environment as space type. -->
         <env:envspacetype name="gc2dspace" width="10" height="10" class="Grid2D">
+            <env:property name="border">Space2D.BORDER_STRICT</env:property>
+
 
             <!-- The objecttypes of this environment. -->
             <env:objecttypes>
@@ -35,7 +37,7 @@
                         new Long(0)
                     </env:property>
                     <env:property name="interactCooldown" dynamic="true">
-                        ($object.lastInteraction - System.currentTimeMillis() + 10000) >= 0 ? new
+                        (($object.lastInteraction - System.currentTimeMillis()) + 10000) >= 0 ? new
                         Long($object.lastInteraction - System.currentTimeMillis() + 10000) : new Long(0)
                     </env:property>
                 </env:objecttype>
@@ -55,6 +57,19 @@
                     </env:property>
                     <env:property name="vision_range">
                         new Integer(3)
+                    </env:property>
+                </env:objecttype>
+                <env:objecttype name="active">
+                    <env:property name="position" event="true"/>
+                    <env:property name="rotation" dynamic="true">
+                        <!-- Rotate the scout to face the direction it is moving -->
+                        $object.direction == null <!--right--> || $object.direction.equals("right") ? null :
+                        $object.direction.equals("left") ? new Vector3Double(Math.PI,0,Math.PI) <!-- left --> :
+                        $object.direction.equals("up") ? new Vector3Double(0,0,Math.PI*3/2) <!-- up --> :
+                        new Vector3Double(0,0,Math.PI/2) <!-- down -->
+                    </env:property>
+                    <env:property name="direction">
+                        new String("left")
                     </env:property>
                 </env:objecttype>
             </env:objecttypes>
@@ -80,6 +95,7 @@
 
             <env:avatarmappings>
                 <env:avatarmapping componenttype="Scout" objecttype="scout"/>
+                <env:avatarmapping componenttype="Active" objecttype="active"/>
             </env:avatarmappings>
 
             <env:actiontypes>
@@ -99,6 +115,9 @@
                         </env:property>
                         <env:rectangle layer="-1" size="vision_size" x="2" y="0" color="#ADF3214f"/>
                     </env:drawable>
+                    <env:drawable objecttype="active" width="1" height="1" rotation="rotation">
+                        <env:ellipse layer="0" x="0" y="0" width="0.8" height="0.8" color="#ff4432"/>
+                    </env:drawable>
                     <env:prelayers>
                         <env:gridlayer width="1.0" height="1.0" color="black"/>
                     </env:prelayers>
@@ -115,6 +134,7 @@
 
     <componenttypes>
         <componenttype name="Scout" filename="au.rdellios.bdiagriculture.ScoutAgent.class"/>
+        <componenttype name="Active" filename="au.rdellios.bdiagriculture.ActiveAgent.class"/>
     </componenttypes>
 
     <configurations>
@@ -198,6 +218,7 @@
             </extensions>
             <components>
                 <component type="Scout" number="1"/>
+                <component type="Active" number="1"/>
             </components>
         </configuration>
     </configurations>
