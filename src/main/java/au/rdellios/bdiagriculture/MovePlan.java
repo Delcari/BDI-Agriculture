@@ -41,23 +41,10 @@ public class MovePlan {
         while (!this.scoutAgent.getPosition().equals(targetPos)) {
             rplan.waitFor(250).get();
             //Which direction is closer? Left/Right/Up/Down
-            int closestDir = (this.scoutAgent.env.getShortestDirection(this.scoutAgent.getPosition().getX(), targetPos.getX(), true)).getAsInteger();
-            //Move in specified direction
-            if (closestDir != 0) {
-                if ((closestDir < 0)) {
-                    this.scoutAgent.Move(this.scoutAgent.getEnvironment(), this.scoutAgent.getMyself(), MoveDir.LEFT);
-                } else {
-                    this.scoutAgent.Move(this.scoutAgent.getEnvironment(), this.scoutAgent.getMyself(), MoveDir.RIGHT);
-                }
-            } else {
-                closestDir = (this.scoutAgent.env.getShortestDirection(this.scoutAgent.getPosition().getY(), targetPos.getY(), false)).getAsInteger();
-                if (closestDir != 0) {
-                    if ((closestDir < 0)) {
-                        this.scoutAgent.Move(this.scoutAgent.getEnvironment(), this.scoutAgent.getMyself(), MoveDir.UP);
-                    } else {
-                        this.scoutAgent.Move(this.scoutAgent.getEnvironment(), this.scoutAgent.getMyself(), MoveDir.DOWN);
-                    }
-                }
+            MoveDir dir = this.scoutAgent.whichDirection(this.scoutAgent.env, this.scoutAgent.getPosition(), targetPos);
+            if (dir != null)
+            {
+                this.scoutAgent.Move(this.scoutAgent.getEnvironment(), this.scoutAgent.getMyself(), dir);
             }
         }
         System.out.println("MovePlan: Target Location Reached");

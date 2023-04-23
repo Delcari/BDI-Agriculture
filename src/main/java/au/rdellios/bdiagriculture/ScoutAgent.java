@@ -20,22 +20,25 @@ import java.util.List;
 
 
 @Agent(type = BDIAgentFactory.TYPE)
+@Goals(@Goal(clazz=ScoutBoundary.class,
+        publish=@Publish(type= IScoutBoundary.class)))
 @Plans({
-        @Plan(trigger = @Trigger(goals = ScoutAgent.LocateTree.class), body = @Body(FindTreesPlan.class)),
+        //@Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(FindTreesPlan.class)),
+        //@Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(FindTreePlan.class)),
         @Plan(trigger = @Trigger(goals = ScoutAgent.MoveTo.class), body = @Body(MovePlan.class)),
-        @Plan(trigger = @Trigger(goals = ScoutAgent.InspectTree.class), body = @Body(InspectTreePlan.class)),})
+        @Plan(trigger = @Trigger(goals = ScoutAgent.InspectTree.class), body = @Body(InspectTreePlan.class)),
+        @Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(AreaScoutPlan.class)),})
 public class ScoutAgent extends BaseAgent {
     @AgentFeature
     protected IBDIAgentFeature bdiFeature;
-
     @Belief
     protected List<ISpaceObject> trees = new ArrayList<ISpaceObject>();
     protected List<ISpaceObject> exploredTrees = new ArrayList<ISpaceObject>();
 
 
-    @Goal(recur = true)
-    public class LocateTree {
-    }
+//    @Goal(recur = true)
+//    public class LocateTree {
+//    }
 
     @Goal(deliberation = @Deliberation(cardinalityone = true))
     public class MoveTo {
@@ -91,6 +94,40 @@ public class ScoutAgent extends BaseAgent {
         return newPos;
     }
 
+    //Which direction should the Agent move in to get closer to the target position?
+    public MoveDir whichDirection(Grid2D env, IVector2 currentPos, IVector2 targetPos)
+    {
+        int closestDir = (env.getShortestDirection(currentPos.getX(), targetPos.getX(), true)).getAsInteger();
+        //Which direction is the closest?
+        if (closestDir != 0) {
+            if ((closestDir < 0)) {
+                return MoveDir.LEFT;
+            } else {
+                return MoveDir.RIGHT;
+            }
+        } else {
+            closestDir = (env.getShortestDirection(currentPos.getY(), targetPos.getY(), false)).getAsInteger();
+            if (closestDir != 0) {
+                if ((closestDir < 0)) {
+                    return MoveDir.UP;
+                } else {
+                    return MoveDir.DOWN;
+                }
+            }
+        }
+        return null;
+    }
+
+    //Which object is closer the 'scoutPosition'?
+    public boolean isClosestObj(IVector2 obj1Pos, IVector2 obj2Pos, IVector2 scoutPosition) {
+        int obj1XDiff = obj1Pos.getXAsInteger() - scoutPosition.getXAsInteger();
+        int obj1YDiff = obj1Pos.getYAsInteger() - scoutPosition.getYAsInteger();
+        int obj2XDiff = obj2Pos.getXAsInteger() - scoutPosition.getXAsInteger();
+        int obj2YDiff = obj2Pos.getYAsInteger() - scoutPosition.getYAsInteger();
+        //Return true if the first object is closer than the second object
+        return Math.abs(obj1XDiff) <= Math.abs(obj2XDiff) && Math.abs(obj1YDiff) <= Math.abs(obj2YDiff);
+    }
+
     //Update the highlight of an object
     public static ISpaceObject updateHighlight(ISpaceObject obj, Color color) {
         if (obj.getProperty("highlight").equals(new Color(149, 255, 83, 85))) return obj;
@@ -101,7 +138,7 @@ public class ScoutAgent extends BaseAgent {
     @OnStart
     public void body() {
         System.out.println("Agent Created: ScoutAgent");
-        bdiFeature.dispatchTopLevelGoal(new LocateTree()).get();
+        //bdiFeature.dispatchTopLevelGoal(new LocateTree()).get();
     }
 }
 

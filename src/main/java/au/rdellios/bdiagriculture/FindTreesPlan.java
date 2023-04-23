@@ -106,17 +106,4 @@ public class FindTreesPlan {
         //Print the number of objects found
         System.out.println("FindTreesPlan: Object Found: " + objectsFound);
     }
-
-    private boolean isClosestObj(ISpaceObject obj1, ISpaceObject obj2, IVector2 scoutPosition) {
-        //Get the position of the objects
-        IVector2 obj1Pos = (IVector2) obj1.getProperty(Space2D.PROPERTY_POSITION);
-        IVector2 obj2Pos = (IVector2) obj2.getProperty(Space2D.PROPERTY_POSITION);
-        //Get the position difference between the scout and the objects
-        int obj1XDiff = obj1Pos.getXAsInteger() - scoutPosition.getXAsInteger();
-        int obj1YDiff = obj1Pos.getYAsInteger() - scoutPosition.getYAsInteger();
-        int obj2XDiff = obj2Pos.getXAsInteger() - scoutPosition.getXAsInteger();
-        int obj2YDiff = obj2Pos.getYAsInteger() - scoutPosition.getYAsInteger();
-        //Return true if the first object is closer than the second object
-        return Math.abs(obj1XDiff) < Math.abs(obj2XDiff) && Math.abs(obj1YDiff) < Math.abs(obj2YDiff);
-    }
 }
