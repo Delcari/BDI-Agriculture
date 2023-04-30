@@ -5,6 +5,7 @@ import jadex.base.PlatformConfigurationHandler;
 import jadex.base.Starter;
 import jadex.bridge.IExternalAccess;
 import jadex.bridge.service.types.cms.CreationInfo;
+
 import java.util.logging.Level;
 
 public class Main {

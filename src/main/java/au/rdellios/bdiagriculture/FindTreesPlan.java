@@ -7,8 +7,6 @@ import jadex.bdiv3.annotation.PlanCapability;
 import jadex.bdiv3.runtime.IPlan;
 import jadex.bdiv3.runtime.impl.PlanFailureException;
 import jadex.extension.envsupport.environment.ISpaceObject;
-import jadex.extension.envsupport.environment.space2d.Space2D;
-import jadex.extension.envsupport.math.IVector2;
 
 import java.awt.*;
 import java.util.ArrayList;

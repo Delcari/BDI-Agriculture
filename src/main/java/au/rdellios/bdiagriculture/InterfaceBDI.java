@@ -13,7 +13,10 @@ import jadex.commons.future.IFuture;
 import jadex.commons.gui.SGUI;
 import jadex.extension.envsupport.math.IVector2;
 import jadex.extension.envsupport.math.Vector2Int;
-import jadex.micro.annotation.*;
+import jadex.micro.annotation.Agent;
+import jadex.micro.annotation.AgentFeature;
+import jadex.micro.annotation.RequiredService;
+import jadex.micro.annotation.RequiredServices;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,12 +24,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
-@Agent(type= BDIAgentFactory.TYPE)
-@RequiredServices(@RequiredService(name="scoutBoundary", type=IScoutBoundary.class, scope=ServiceScope.PLATFORM))
-@Goals(@Goal(clazz= ScoutBoundary.class))
-@Plans(@Plan(trigger=@Trigger(goals= ScoutBoundary.class), body=@Body(service=@ServicePlan(name="scoutBoundary"))))
-public class InterfaceBDI
-{
+@Agent(type = BDIAgentFactory.TYPE)
+@RequiredServices(@RequiredService(name = "scoutBoundary", type = IScoutBoundary.class, scope = ServiceScope.PLATFORM))
+@Goals(@Goal(clazz = ScoutBoundary.class))
+@Plans(@Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(service = @ServicePlan(name = "scoutBoundary"))))
+public class InterfaceBDI {
 
     protected JFrame f;
     protected JPanel pnl;
@@ -40,12 +42,9 @@ public class InterfaceBDI
     protected IBDIAgentFeature bdiFeature;
 
     @OnStart
-    public void body()
-    {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
+    public void body() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
                 //Draw the Interface
                 f = new JFrame();
                 JPanel pnl = new JPanel();
@@ -110,7 +109,7 @@ public class InterfaceBDI
                 txtOut.setLineWrap(true);
                 //remove background
                 JScrollPane sp = new JScrollPane(txtOut);
-                sp.setBorder(BorderFactory.createEmptyBorder(8,2,8,2));
+                sp.setBorder(BorderFactory.createEmptyBorder(8, 2, 8, 2));
                 pnl.add(sp, gbc);
 
                 gbc = new GridBagConstraints();
@@ -133,10 +132,8 @@ public class InterfaceBDI
                                     txtOut.setText("goalStarted: [(startPos) -> (endPos)] (" + startPos + ") -> (" + endPos + ")");
                                     IVector2[] boundary = {startPos, endPos};
                                     bdiFeature.dispatchTopLevelGoal(new ScoutBoundary(boundary)).get();
-                                    SwingUtilities.invokeLater(new Runnable()
-                                    {
-                                        public void run()
-                                        {
+                                    SwingUtilities.invokeLater(new Runnable() {
+                                        public void run() {
                                             txtOut.setText("goalFinished");
                                         }
                                     });
@@ -151,9 +148,8 @@ public class InterfaceBDI
                 });
 
 
-
                 pnl.setBorder(BorderFactory.createEmptyBorder(2, 8, 2, 8));
-                f.setSize(210,200);
+                f.setSize(210, 200);
                 //f.pack();
                 f.setLocation(SGUI.calculateMiddlePosition(f));
                 f.setVisible(true);
@@ -163,18 +159,14 @@ public class InterfaceBDI
     }
 
     /**
-     *  Cleanup when agent is killed.
+     * Cleanup when agent is killed.
      */
     //@AgentKilled
     @OnEnd
-    public void	cleanup()
-    {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                if(f!=null)
-                {
+    public void cleanup() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (f != null) {
                     f.dispose();
                 }
             }

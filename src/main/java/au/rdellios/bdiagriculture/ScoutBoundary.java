@@ -5,13 +5,11 @@ import jadex.bdiv3.annotation.GoalParameter;
 import jadex.extension.envsupport.math.IVector2;
 
 @Goal
-public class ScoutBoundary
-{
+public class ScoutBoundary {
     @GoalParameter
     IVector2[] boundary;
 
-    public ScoutBoundary(IVector2[] boundary)
-    {
+    public ScoutBoundary(IVector2[] boundary) {
         this.boundary = boundary;
     }
 }
