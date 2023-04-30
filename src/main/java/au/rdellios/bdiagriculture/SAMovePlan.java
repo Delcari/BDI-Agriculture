@@ -11,7 +11,7 @@ import jadex.extension.envsupport.environment.space2d.Space2D;
 import jadex.extension.envsupport.math.IVector2;
 
 @Plan
-public class MovePlan {
+public class SAMovePlan {
     @PlanCapability
     protected ScoutAgent scoutAgent;
 
@@ -42,8 +42,7 @@ public class MovePlan {
             rplan.waitFor(250).get();
             //Which direction is closer? Left/Right/Up/Down
             Direction dir = this.scoutAgent.whichDirection(this.scoutAgent.env, this.scoutAgent.getPosition(), targetPos);
-            if (dir != null)
-            {
+            if (dir != null) {
                 this.scoutAgent.Move(this.scoutAgent.getEnvironment(), this.scoutAgent.getMyself(), dir);
             }
         }
