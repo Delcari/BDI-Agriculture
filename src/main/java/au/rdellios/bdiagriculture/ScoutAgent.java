@@ -7,10 +7,7 @@ import jadex.bdiv3.features.IBDIAgentFeature;
 import jadex.bdiv3.runtime.ChangeEvent;
 import jadex.bridge.service.annotation.OnStart;
 import jadex.extension.envsupport.environment.ISpaceObject;
-import jadex.extension.envsupport.environment.space2d.Grid2D;
-import jadex.extension.envsupport.environment.space2d.Space2D;
 import jadex.extension.envsupport.math.IVector2;
-import jadex.extension.envsupport.math.Vector2Int;
 import jadex.micro.annotation.Agent;
 import jadex.micro.annotation.AgentFeature;
 
@@ -20,14 +17,13 @@ import java.util.List;
 
 
 @Agent(type = BDIAgentFactory.TYPE)
-@Goals(@Goal(clazz = ScoutBoundary.class,
-        publish = @Publish(type = IScoutBoundary.class), deliberation = @Deliberation(inhibits = ScoutAgent.MoveTo.class)))
+@Goals(@Goal(clazz = ScoutBoundary.class, publish = @Publish(type = IScoutBoundary.class), deliberation = @Deliberation(inhibits = ScoutAgent.MoveTo.class)))
 @Plans({
         @Plan(trigger = @Trigger(goals = ScoutAgent.LocateTree.class), body = @Body(FindTreesPlan.class)),
         //@Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(FindTreePlan.class)),
         @Plan(trigger = @Trigger(goals = ScoutAgent.MoveTo.class), body = @Body(MovePlan.class)),
         @Plan(trigger = @Trigger(goals = ScoutAgent.InspectTree.class), body = @Body(InspectTreePlan.class)),
-        @Plan (trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(AreaScoutPlan.class)),
+        @Plan(trigger = @Trigger(goals = ScoutBoundary.class), body = @Body(AreaScoutPlan.class)),
 })
 
 public class ScoutAgent extends BaseAgent {
@@ -65,89 +61,6 @@ public class ScoutAgent extends BaseAgent {
         public InspectTree(ISpaceObject targetObj) {
             this.targetObj = targetObj;
         }
-    }
-
-    public IVector2 Move(Grid2D env, ISpaceObject obj, Direction moveDir) {
-        Object oid = obj.getId();
-        IVector2 newPos = (IVector2) obj.getProperty(Space2D.PROPERTY_POSITION);
-        //Which direction is the agent going to move in?
-        switch (moveDir) {
-            case LEFT:
-                //Update the direction the object is facing
-                obj.setProperty("direction", moveDir.toString());
-                //Update the target position
-                newPos.add(new Vector2Int(-1, 0));
-                break;
-            case RIGHT:
-                obj.setProperty("direction", moveDir.toString());
-                newPos.add(new Vector2Int(1, 0));
-                break;
-            case UP:
-                obj.setProperty("direction", moveDir.toString());
-                newPos.add(new Vector2Int(0, -1));
-                break;
-            case DOWN:
-                obj.setProperty("direction", moveDir.toString());
-                newPos.add(new Vector2Int(0, 1));
-                break;
-        }
-        //Set the position of the object
-        env.setPosition(oid, newPos);
-        return newPos;
-    }
-
-    //Check if the object is within the vision range of the agent
-    public boolean inVision(ISpaceObject obj) {
-        int visionRange = (int) this.getMyself().getProperty("vision_range");
-        Direction direction = Direction.valueOf((String) this.getMyself().getProperty("direction"));
-        IVector2 objPosition = (IVector2) obj.getProperty(Space2D.PROPERTY_POSITION);
-
-        //Get the position difference between the agent and the object
-        int xDiff = objPosition.getXAsInteger() - this.getPosition().getXAsInteger();
-        int yDiff = objPosition.getYAsInteger() - this.getPosition().getYAsInteger();
-
-        switch (direction) {
-            case LEFT:
-                if ((xDiff >= -visionRange && xDiff < 0) && (yDiff <= Math.floor(visionRange / 2) && yDiff >= -Math.floor(visionRange / 2)))
-                    return true;
-                break;
-            case RIGHT:
-                if ((xDiff > 0 && xDiff <= visionRange) && (yDiff <= Math.floor(visionRange / 2) && yDiff >= -Math.floor(visionRange / 2)))
-                    return true;
-                break;
-            case UP:
-                if ((yDiff >= -visionRange && yDiff < 0) && (xDiff <= Math.floor(visionRange / 2) && xDiff >= -Math.floor(visionRange / 2)))
-                    return true;
-                break;
-            case DOWN:
-                if ((yDiff > 0 && yDiff <= visionRange) && (xDiff <= Math.floor(visionRange / 2) && xDiff >= -Math.floor(visionRange / 2)))
-                    return true;
-                break;
-        }
-        return false;
-    }
-
-    //Which direction should the Agent move in to get closer to the target position?
-    public Direction whichDirection(Grid2D env, IVector2 currentPos, IVector2 targetPos) {
-        int closestDir = (env.getShortestDirection(currentPos.getX(), targetPos.getX(), true)).getAsInteger();
-        //Which direction is the closest?
-        if (closestDir != 0) {
-            if ((closestDir < 0)) {
-                return Direction.LEFT;
-            } else {
-                return Direction.RIGHT;
-            }
-        } else {
-            closestDir = (env.getShortestDirection(currentPos.getY(), targetPos.getY(), false)).getAsInteger();
-            if (closestDir != 0) {
-                if ((closestDir < 0)) {
-                    return Direction.UP;
-                } else {
-                    return Direction.DOWN;
-                }
-            }
-        }
-        return null;
     }
 
     //Which object is closer the 'scoutPosition'?
