@@ -28,10 +28,14 @@ public class AreaScoutPlan {
     @PlanBody
     public void body(IVector2[] boundary) {
         System.out.println("Starting AreaScoutPlan...");
+        scoutAgent.objectiveStartTime = System.currentTimeMillis();
 
         //Get the start and end positions of the boundary
         IVector2 start = boundary[0];
         IVector2 end = boundary[1];
+
+        scoutAgent.boundary[0] = start;
+        scoutAgent.boundary[1] = end;
 
         //Get the width and height of the boundary
         int areaHeight = getBoundaryHeight(start, end);
@@ -54,7 +58,7 @@ public class AreaScoutPlan {
                 endPos = new Vector2Int(end.getXAsInteger(), startPos.getYAsInteger());
 
                 //If the scout is on the last pass, check if the end position is outside the boundary
-                if (i==numPasses - 1) {
+                if (i == numPasses - 1) {
                     if (endPos.getYAsInteger() > end.getYAsInteger()) {
                         endPos = new Vector2Int(endPos.getXAsInteger(), end.getYAsInteger());
                         startPos = new Vector2Int(startPos.getXAsInteger(), end.getYAsInteger());
@@ -72,7 +76,7 @@ public class AreaScoutPlan {
                 targetPos = startPos;
                 //Loop until the scout has reached the end position
                 do {
-                    rplan.waitFor(250).get();
+                    rplan.waitFor(Reference.TIME_STEP * Reference.MOVE_STEPS).get();
 
                     //If the scout has reached the target position (startPos), update the target position
                     if (this.scoutAgent.getPosition().equals(startPos)) targetPos = endPos;
@@ -92,7 +96,7 @@ public class AreaScoutPlan {
                 startPos = new Vector2Int(i * visionRange + 1 + start.getXAsInteger(), start.getYAsInteger());
                 endPos = new Vector2Int(startPos.getXAsInteger(), end.getYAsInteger());
 
-                if (i==numPasses - 1) {
+                if (i == numPasses - 1) {
                     if (endPos.getXAsInteger() > end.getXAsInteger()) {
                         endPos = new Vector2Int(end.getXAsInteger(), endPos.getYAsInteger());
                         startPos = new Vector2Int(end.getXAsInteger(), startPos.getYAsInteger());
@@ -107,7 +111,7 @@ public class AreaScoutPlan {
 
                 targetPos = startPos;
                 do {
-                    rplan.waitFor(250).get();
+                    rplan.waitFor(Reference.TIME_STEP * Reference.MOVE_STEPS).get();
 
                     if (this.scoutAgent.getPosition().equals(startPos)) targetPos = endPos;
 

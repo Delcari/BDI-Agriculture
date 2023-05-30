@@ -1,5 +1,5 @@
 package au.rdellios.bdiagriculture;
 
 public enum Direction {
-    LEFT, RIGHT, UP, DOWN
+    WEST, EAST, NORTH, SOUTH, NORTHEAST, NORTHWEST, SOUTHEAST, SOUTHWEST
 }

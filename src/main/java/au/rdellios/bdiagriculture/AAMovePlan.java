@@ -35,7 +35,7 @@ public class AAMovePlan {
         IVector2 targetPos = (IVector2) targetObj.getProperty(Space2D.PROPERTY_POSITION);
         // Continue moving until the Agent is at the targetPosition
         while (!this.activeAgent.getPosition().equals(targetPos)) {
-            rplan.waitFor(250).get();
+            rplan.waitFor(Reference.TIME_STEP * Reference.MOVE_STEPS).get();
             //Which direction is closer? Left/Right/Up/Down
             Direction dir = this.activeAgent.whichDirection(this.activeAgent.env, this.activeAgent.getPosition(), targetPos);
             if (dir != null) {
@@ -43,5 +43,8 @@ public class AAMovePlan {
             }
         }
         System.out.println("MovePlan: Target Location Reached");
+        //Dispatch subgoal to inspect the target object
+        System.out.println("MovePlan: Dispatching InspectTree SubGoal");
+        rplan.dispatchSubgoal(activeAgent.new InteractTree(targetObj)).get();
     }
 }

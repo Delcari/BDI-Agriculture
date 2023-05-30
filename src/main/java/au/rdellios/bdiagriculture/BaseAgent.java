@@ -20,6 +20,9 @@ public abstract class BaseAgent {
     @Agent
     protected IInternalAccess agent;
 
+    //move steps
+    protected int moveSteps = 0;
+
     // The Environment
     protected Grid2D env = (Grid2D) EnvironmentService.getSpace(agent, "mygc2dspace").get();
 
@@ -50,28 +53,31 @@ public abstract class BaseAgent {
         Object oid = obj.getId();
         IVector2 newPos = (IVector2) obj.getProperty(Space2D.PROPERTY_POSITION);
         //Which direction is the agent going to move in?
+        moveSteps++;
         switch (moveDir) {
-            case LEFT:
+            case WEST:
                 //Update the direction the object is facing
                 obj.setProperty("direction", moveDir.toString());
                 //Update the target position
-                newPos.add(new Vector2Int(-1, 0));
+                if (newPos.getXAsInteger() > 0)
+                    newPos.add(new Vector2Int(-1, 0));
                 break;
-            case RIGHT:
+            case EAST:
                 obj.setProperty("direction", moveDir.toString());
-                newPos.add(new Vector2Int(1, 0));
+                if (newPos.getXAsInteger() < this.env.getAreaSize().getXAsInteger() - 1)
+                    newPos.add(new Vector2Int(1, 0));
                 break;
-            case UP:
+            case NORTH:
                 obj.setProperty("direction", moveDir.toString());
-                newPos.add(new Vector2Int(0, -1));
+                if (newPos.getYAsInteger() > 0)
+                    newPos.add(new Vector2Int(0, -1));
                 break;
-            case DOWN:
+            case SOUTH:
                 obj.setProperty("direction", moveDir.toString());
-                newPos.add(new Vector2Int(0, 1));
+                if (newPos.getYAsInteger() < this.env.getAreaSize().getYAsInteger() - 1)
+                    newPos.add(new Vector2Int(0, 1));
                 break;
         }
-        //Set the position of the object
-        env.setPosition(oid, newPos);
         return newPos;
     }
 
@@ -86,19 +92,19 @@ public abstract class BaseAgent {
         int yDiff = objPosition.getYAsInteger() - this.getPosition().getYAsInteger();
 
         switch (direction) {
-            case LEFT:
+            case WEST:
                 if ((xDiff >= -visionRange && xDiff < 0) && (yDiff <= Math.floor(visionRange / 2) && yDiff >= -Math.floor(visionRange / 2)))
                     return true;
                 break;
-            case RIGHT:
+            case EAST:
                 if ((xDiff > 0 && xDiff <= visionRange) && (yDiff <= Math.floor(visionRange / 2) && yDiff >= -Math.floor(visionRange / 2)))
                     return true;
                 break;
-            case UP:
+            case NORTH:
                 if ((yDiff >= -visionRange && yDiff < 0) && (xDiff <= Math.floor(visionRange / 2) && xDiff >= -Math.floor(visionRange / 2)))
                     return true;
                 break;
-            case DOWN:
+            case SOUTH:
                 if ((yDiff > 0 && yDiff <= visionRange) && (xDiff <= Math.floor(visionRange / 2) && xDiff >= -Math.floor(visionRange / 2)))
                     return true;
                 break;
@@ -112,17 +118,17 @@ public abstract class BaseAgent {
         //Which direction is the closest?
         if (closestDir != 0) {
             if ((closestDir < 0)) {
-                return Direction.LEFT;
+                return Direction.WEST;
             } else {
-                return Direction.RIGHT;
+                return Direction.EAST;
             }
         } else {
             closestDir = (env.getShortestDirection(currentPos.getY(), targetPos.getY(), false)).getAsInteger();
             if (closestDir != 0) {
                 if ((closestDir < 0)) {
-                    return Direction.UP;
+                    return Direction.NORTH;
                 } else {
-                    return Direction.DOWN;
+                    return Direction.SOUTH;
                 }
             }
         }

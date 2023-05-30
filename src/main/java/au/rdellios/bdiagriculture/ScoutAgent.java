@@ -27,12 +27,27 @@ import java.util.List;
 })
 
 public class ScoutAgent extends BaseAgent {
+    //Track how long the agent spent idling
+    protected long idleTime = 0;
+    protected long objectiveStartTime = 0;
+    protected int totalTreesTreated = 0;
+    protected int totalTreatments = 0;
+
     @AgentFeature
     protected IBDIAgentFeature bdiFeature;
     @Belief
     protected List<ISpaceObject> trees = new ArrayList<ISpaceObject>();
-    protected List<ISpaceObject> exploredTrees = new ArrayList<ISpaceObject>();
 
+    @Belief
+    protected IVector2[] boundary = new IVector2[2];
+
+    @Belief
+    protected boolean boundaryExplored = false;
+
+    //Once all of the trees have been explored, the scout will move the exploredTrees back into the trees list
+    //and then wait for the cooldown to finish before inspecting the trees again. Once the trees all have reached an optimal state,
+    //the boundary has then been successfully optimised and the scout will move to the next boundary.
+    protected List<ISpaceObject> exploredTrees = new ArrayList<ISpaceObject>();
 
     @Goal(recur = true)
     public class LocateTree {
@@ -49,7 +64,7 @@ public class ScoutAgent extends BaseAgent {
         }
     }
 
-    @Goal
+    @Goal(deliberation = @Deliberation(inhibits = ScoutAgent.LocateTree.class))
     public class InspectTree {
         @GoalParameter
         protected ISpaceObject targetObj;
@@ -75,7 +90,9 @@ public class ScoutAgent extends BaseAgent {
 
     //Update the highlight of an object
     public static ISpaceObject updateHighlight(ISpaceObject obj, Color color) {
-        if (obj.getProperty("highlight").equals(new Color(149, 255, 83, 85))) return obj;
+        if (obj.getProperty("highlight").equals(Reference.HL_GREEN)) return obj;
+        if (obj.getProperty("highlight").equals(Reference.HL_ORANGE) && color != Reference.HL_GREEN) return obj;
+
         obj.setProperty("highlight", color);
         return obj;
     }

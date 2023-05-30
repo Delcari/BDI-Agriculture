@@ -8,7 +8,6 @@ import jadex.extension.envsupport.math.IVector2;
 public class ScoutBoundary {
     @GoalParameter
     IVector2[] boundary;
-
     public ScoutBoundary(IVector2[] boundary) {
         this.boundary = boundary;
     }

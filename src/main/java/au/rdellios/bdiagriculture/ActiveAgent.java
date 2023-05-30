@@ -16,10 +16,11 @@ import java.util.List;
 @Agent(type = BDIAgentFactory.TYPE)
 @Plans({
         @Plan(trigger = @Trigger(goals = ActiveAgent.MoveTo.class), body = @Body(AAMovePlan.class)),
-        @Plan(trigger=@Trigger(service=@ServiceTrigger(type=IInformTree.class)), body = @Body(InformTreePlan.class)),
+        @Plan(trigger = @Trigger(service = @ServiceTrigger(type = IInformTree.class)), body = @Body(InformTreePlan.class)),
+        @Plan(trigger = @Trigger(goals = ActiveAgent.InteractTree.class), body = @Body(InteractTreePlan.class)),
 })
-@ProvidedServices(@ProvidedService(name="infotree", type=IInformTree.class,
-        implementation=@Implementation(IBDIAgent.class)))
+@ProvidedServices(@ProvidedService(name = "infotree", type = IInformTree.class,
+        implementation = @Implementation(IBDIAgent.class)))
 public class ActiveAgent extends BaseAgent {
     @AgentFeature
     protected IBDIAgentFeature bdiFeature;
@@ -35,6 +36,20 @@ public class ActiveAgent extends BaseAgent {
         @GoalCreationCondition(rawevents = @RawEvent(value = ChangeEvent.FACTADDED, second = "trees"))
         public static boolean checkTree(ISpaceObject obj) {
             return obj != null;
+        }
+    }
+
+    @Goal
+    public class InteractTree {
+        @GoalParameter
+        protected ISpaceObject targetObj;
+
+        public ISpaceObject getTargetObj() {
+            return targetObj;
+        }
+
+        public InteractTree(ISpaceObject targetObj) {
+            this.targetObj = targetObj;
         }
     }
 

@@ -10,6 +10,8 @@ import jadex.extension.envsupport.environment.ISpaceObject;
 import jadex.extension.envsupport.environment.space2d.Space2D;
 import jadex.extension.envsupport.math.IVector2;
 
+import java.util.Objects;
+
 @Plan
 public class SAMovePlan {
     @PlanCapability
@@ -20,9 +22,10 @@ public class SAMovePlan {
 
     @PlanAPI
     IPlan rplan;
-
     @PlanBody
     public void body() {
+        //starttime
+        long startTime = System.currentTimeMillis();
         System.out.println("Starting MovePlan...");
         //If there are no trees left to explore, end the plan
         if (scoutAgent.trees.isEmpty()) {
@@ -30,18 +33,26 @@ public class SAMovePlan {
             throw new PlanFailureException();
         }
         //Get the next tree to explore
-        ISpaceObject targetObj = scoutAgent.trees.remove(0);
-        //Add the tree to the list of explored trees
-        scoutAgent.exploredTrees.add(targetObj);
+        int i = 0;
+        ISpaceObject targetObj = scoutAgent.trees.get(i);
+        while ((long) targetObj.getProperty("interactCooldown") > 0 || Objects.equals((String) targetObj.getProperty("cropLoad"), "suboptimal")) {
+            ++i;
+            i = i % scoutAgent.trees.size();
+            targetObj = scoutAgent.trees.get(i);
+        }
+        //Calculating time spent idling
+        scoutAgent.idleTime = scoutAgent.idleTime + (System.currentTimeMillis() - startTime);
+
         //Get the position of the tree
         IVector2 targetPos = (IVector2) targetObj.getProperty(Space2D.PROPERTY_POSITION);
         //Get the ID of the Scout
         Object oid = this.scoutAgent.env.getAvatar(this.scoutAgent.getAgent().getDescription()).getId();
         // Continue moving until the Scout is at the targetPosition
-        while (!this.scoutAgent.getPosition().equals(targetPos)) {
-            rplan.waitFor(250).get();
+        while (this.scoutAgent.getPosition().getDistance(targetPos).getAsInteger() > 1) {
+            rplan.waitFor(Reference.TIME_STEP * Reference.MOVE_STEPS).get();
             //Which direction is closer? Left/Right/Up/Down
             Direction dir = this.scoutAgent.whichDirection(this.scoutAgent.env, this.scoutAgent.getPosition(), targetPos);
+            //If the agent is one tile away from the target
             if (dir != null) {
                 this.scoutAgent.Move(this.scoutAgent.getEnvironment(), this.scoutAgent.getMyself(), dir);
             }
